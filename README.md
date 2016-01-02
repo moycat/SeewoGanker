@@ -14,9 +14,13 @@ Seewo智能电视的应用商店的山寨后台。可以自己添加APP给电视
 
 在后台/admin添加分类和软件。默认管理员账号密码：seewoapp/seewoapp
 
+**更新：seewo电视采用断点续传多线程下载，所以原先使用php模拟下载的做法无效。务必使用web服务端自带的rewrite功能提供下载，nginx的示例如下。**
+**用PHP分析http头以文件指针模拟断点续传理论可行，但较复杂未予实现。**
+
 ## Nginx网站配置示例
 
 **主要是重写部分，不存在的文件都重定向到index.php**
+**下载部分靠nginx自己的rewrite完成，其他服务端请自己修改**
 
 ```
 server {
@@ -27,6 +31,21 @@ server {
 	index index.php index.html;
 	server_name app.seewo.com test.seewo.com;
 
+	location /store/apk/ {
+		if ($args ~* "apkPath=(.*)$")
+		{
+			set $apkPath $1;
+			rewrite (.*) /apk/$apkPath;
+			break;
+		}
+		if ($args ~* "iconPath=(.*)$")
+		{
+			set $iconPath $1;
+			rewrite (.*) /icon/$iconPath;
+			break;
+		}
+	}
+	
 	location / {
 		if (!-f $request_filename){
 			rewrite (.*) /index.php;

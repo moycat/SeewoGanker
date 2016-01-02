@@ -47,6 +47,7 @@ function send_category_list()
 	echo json_encode($respond, JSON_UNESCAPED_UNICODE);
 }
 
+/*
 function send_icon($filename)
 {
 	$file = './icon/'.$filename;
@@ -68,6 +69,7 @@ function send_apk($filename)
 	header('Content-Type: application/octet-stream');
 	readfile($file);
 }
+*/
 
 function if_null($check)
 {
